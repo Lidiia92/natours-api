@@ -1,0 +1,22 @@
+{
+  "name": "natours",
+  "version": "1.0.0",
+  "description": "practicing with node, express and mongodb",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lidiia92/natours-api.git"
+  },
+  "author": "Lidiia Gallagher",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Lidiia92/natours-api/issues"
+  },
+  "homepage": "https://github.com/Lidiia92/natours-api#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
