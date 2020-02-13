@@ -3,17 +3,19 @@ const express = require('express');
 const tourController = require('../controllers/tourController');
 
 //MIDDLEWARE
-const route = express.Router();
+const router = express.Router();
 
-route
+router.param('id', tourController.checkID);
+
+router
   .route('/')
   .get(tourController.getAllTours)
-  .post(tourController.addNewTour);
+  .post(tourController.checkBody, tourController.addNewTour);
 
-route
+router
   .route('/:id')
   .get(tourController.getTourById)
   .patch(tourController.updateTour)
   .delete(tourController.deleteTour);
 
-module.exports = route;
+module.exports = router;

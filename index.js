@@ -7,8 +7,12 @@ const userRoute = require('./routes/userRoutes');
 const app = express();
 
 // MIDDLEWARE ***
-app.use(morgan('dev'));
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
+
 app.use(express.json()); // to parse data from req.body
+app.use(express.static(`${__dirname}/public`)); //accesing html static files
 
 app.use((req, res, next) => {
   console.log('Middleware');
