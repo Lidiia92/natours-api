@@ -8,7 +8,26 @@ const Tour = require('./../models/tourModel');
 // ROUTE HANDLES
 exports.getAllTours = async (req, res) => {
   try {
-    const tours = await Tour.find();
+    //const tours = Tour.find().where('duration').equals(5).where.('difficulty').equals('easy');
+    //const tours = await Tour.find();
+
+    //BUILD QUERY
+    // 1) Removing pagination, sort params out of query strings, because they aren't used to filter the data by name or difficulty params
+    const queryCopy = { ...req.query };
+    const excludedQueryFields = ['page', 'sort', 'limit', 'fields'];
+    excludedQueryFields.forEach(field => delete queryCopy[field]);
+
+    // 2) Filtering with operators
+    let queryString = JSON.stringify(queryCopy);
+    queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, match => {
+      return `$${match}`;
+    }); //finding one of those operators and replacing it with the operator name + $
+
+    const query = Tour.find(JSON.parse(queryString));
+
+    //EXECUTED QUERY
+    const tours = await query;
+
     res.status(200).json({
       status: 'success',
       results: tours.length,
