@@ -1,3 +1,4 @@
+const APIFeatures = require('./../utils/apiFeatures');
 const Tour = require('./../models/tourModel');
 
 //TOP LEVEL CODE EXECUTED ONCE, READ DATA HERE
@@ -11,63 +12,6 @@ exports.aliasTopTours = async (req, res, next) => {
   req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
   next();
 };
-
-class APIFeatures {
-  constructor(query, queryStrVal) {
-    this.query = query;
-    this.queryStrVal = queryStrVal;
-  }
-
-  filter() {
-    //Removing pagination, sort params out of query strings, because they aren't used to filter the data by name or difficulty params
-    const queryCopy = { ...this.queryStrVal };
-    const excludedQueryFields = ['page', 'sort', 'limit', 'fields'];
-    excludedQueryFields.forEach(field => delete queryCopy[field]);
-
-    // Filtering with operators
-    let queryString = JSON.stringify(queryCopy);
-    queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, match => {
-      return `$${match}`;
-    }); //finding one of those operators and replacing it with the operator name + $
-
-    this.query = this.query.find(JSON.parse(queryString));
-    return this;
-  }
-
-  sort() {
-    // 2) Sorting
-    if (this.queryStrVal.sort) {
-      const sortBy = this.queryStrVal.sort.split(',').join(' ');
-      this.query = this.query.sort(sortBy);
-    } else {
-      this.query = this.query.sort('-createdAt');
-    }
-
-    return this;
-  }
-
-  limitFields() {
-    if (this.queryStrVal.fields) {
-      const fields = this.queryStrVal.fields.split(',').join(' ');
-      this.query = this.query.select(fields);
-    } else {
-      this.query = this.query.select('-__v');
-    }
-
-    return this;
-  }
-
-  paginate() {
-    // 4) Pagination
-    const page = this.queryStrVal.page * 1 || 1;
-    const resultsLimit = this.queryStrVal.limit * 1 || 100;
-    const skip = (page - 1) * resultsLimit;
-
-    this.query = this.query.skip(skip).limit(resultsLimit);
-
-    return this;
-  }
-}
 
 // ROUTE HANDLES
 exports.getAllTours = async (req, res) => {
@@ -155,6 +99,98 @@ exports.deleteTour = async (req, res) => {
     res.status(201).json({
       status: 'success',
       data: null
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'fail',
+      message: err
+    });
+  }
+};
+
+exports.getTourStats = async (req, res) => {
+  try {
+    const stats = await Tour.aggregate([
+      {
+        $match: { ratingsAverage: { $gte: 4.5 } }
+      },
+      {
+        $group: {
+          _id: { $toUpper: '$difficulty' },
+          numTours: { $sum: 1 },
+          numRatings: { $sum: '$ratingsQuantity' },
+          avgRating: { $avg: '$ratingsAverage' },
+          avgPrice: { $avg: '$price' },
+          minPrice: { $min: '$price' },
+          maxPrice: { $max: '$price' }
+        }
+      },
+      {
+        $sort: {
+          avgPrice: 1
+        }
+      }
+    ]);
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        stats
+      }
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'fail',
+      message: err
+    });
+  }
+};
+
+exports.getMonthlyPlan = async (req, res) => {
+  try {
+    const year = req.params.year * 1;
+
+    const plan = await Tour.aggregate([
+      {
+        $unwind: '$startDates'
+      },
+      {
+        $match: {
+          startDates: {
+            $gte: new Date(`${year}-01-01`),
+            $lte: new Date(`${year}-12-31`)
+          }
+        }
+      },
+      {
+        $group: {
+          _id: { $month: '$startDates' },
+          numTourStart: { $sum: 1 },
+          tour: { $push: '$name' }
+        }
+      },
+      {
+        $addFields: {
+          month: '$_id'
+        }
+      },
+      {
+        $project: {
+          _id: 0
+        }
+      },
+      {
+        $sort: {
+          numTourStart: -1
+        }
+      }
+    ]);
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        plan
+      }
     });
   } catch (err) {
     res.status(404).json({
