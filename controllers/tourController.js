@@ -67,8 +67,9 @@ exports.addNewTour = async (req, res) => {
     });
   } catch (error) {
     res.status(400).json({
-      status: 'failt',
-      message: 'Invalid data sent'
+      status: 'fail',
+      message: 'Invalid data sent',
+      err: error
     });
   }
 };
