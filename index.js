@@ -1,6 +1,8 @@
 const express = require('express');
 const morgan = require('morgan');
 
+const AppError = require('./utils/appError');
+const errorController = require('./controllers/errorController');
 const tourRoute = require('./routes/tourRoutes');
 const userRoute = require('./routes/userRoutes');
 
@@ -13,11 +15,6 @@ if (process.env.NODE_ENV === 'development') {
 
 app.use(express.json()); // to parse data from req.body
 app.use(express.static(`${__dirname}/public`)); //accesing html static files
-
-app.use((req, res, next) => {
-  console.log('Middleware');
-  next();
-});
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
@@ -33,5 +30,16 @@ app.use((req, res, next) => {
 // ROUTES
 app.use('/api/v1/tours', tourRoute);
 app.use('/api/v1/users', userRoute);
+
+//NONEXISTING ROUTES HANDLER
+app.all('*', (req, res, next) => {
+  // const err = new Error(`Can't find ${req.originalUrl}`);
+  // err.status = 'fail';
+  // err.statusCode = 404;
+
+  next(new AppError(`Can't find ${req.originalUrl}`, 404));
+});
+
+app.use(errorController);
 
 module.exports = app;
