@@ -47,6 +47,14 @@ const handleValidationErrorDB = err => {
   return new AppError(message, 400);
 };
 
+const handleTokenError = () => {
+  return new AppError('Invalid token. Log in again', 401);
+};
+
+const handleTokenExpiredError = () => {
+  return new AppError('Expired token. Log in again', 401);
+};
+
 module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
@@ -59,6 +67,8 @@ module.exports = (err, req, res, next) => {
     if (newErr.code === 11000) newErr = handleDuplicateFieldDB(newErr);
     if (newErr.name === 'ValidationError')
       newErr = handleValidationErrorDB(newErr);
+    if (newErr.name === 'JsonWebTokenError') newErr = handleTokenError();
+    if (newErr.name === 'TokenExpiredError') newErr = handleTokenExpiredError();
     sendErrorProd(newErr, res);
   }
 };
