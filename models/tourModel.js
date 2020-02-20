@@ -108,7 +108,7 @@ tourSchema.pre('save', function(next) {
 //   next();
 // });
 
-//QUERY MIDDLEWARE: all the strings that start with 'find'
+//QUERY MIDDLEWARE: all the strings that start with 'find' findOne, findMany
 tourSchema.pre(/^find/, function(next) {
   this.find({ secretTour: { $ne: true } });
   this.start = Date.now();
