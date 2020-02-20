@@ -18,13 +18,14 @@ exports.aliasTopTours = async (req, res, next) => {
 // ROUTE HANDLES
 exports.getAllTours = catchAsync(async (req, res, next) => {
   //EXECUTED QUERY
-  const features = new APIFeatures(Tour.find(), req.query)
+  const features = new APIFeatures(Tour.find({}), req.query)
     .filter()
     .sort()
     .limitFields()
     .paginate();
 
-  const tours = await features.query;
+  //const tours = await features.query;
+  const tours = await Tour.find({});
 
   res.status(200).json({
     status: 'success',

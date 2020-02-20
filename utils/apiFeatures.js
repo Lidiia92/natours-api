@@ -17,6 +17,8 @@ class APIFeatures {
     }); //finding one of those operators and replacing it with the operator name + $
 
     this.query = this.query.find(JSON.parse(queryString));
+
+    console.log(this);
     return this;
   }
 
