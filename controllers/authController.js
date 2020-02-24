@@ -3,7 +3,7 @@ const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
-const AppError = require('./../utils/appError');
+const AppError = require('../utils/appError.js');
 const sendEmail = require('./../utils/email');
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -197,21 +197,14 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
     (await user.correctPassword(req.body.passwordCurrent, user.password)) ===
     false
   ) {
-    //return next(new AppError('Your current password is wrong.', 401));
-    res.status(401).json({
-      status: 'fail',
-      data: {
-        data: new AppError('Your current password is wrong.', 401)
-      }
-    });
-  } else {
-    // 3) If so, update password
-    user.password = req.body.password;
-    user.passwordConfirm = req.body.passwordConfirm;
-    await user.save();
-    // User.findByIdAndUpdate will NOT work as intended!
-
-    // 4) Log user in, send JWT
-    createSendToken(user, 200, res);
+    return next(new AppError('Your current password is wrong.', 401));
   }
+  // 3) If so, update password
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  await user.save();
+  // User.findByIdAndUpdate will NOT work as intended!
+
+  // 4) Log user in, send JWT
+  createSendToken(user, 200, res);
 });

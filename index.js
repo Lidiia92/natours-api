@@ -1,8 +1,8 @@
 const express = require('express');
 const morgan = require('morgan');
-
-const AppError = require('./utils/appError');
 const errorController = require('./controllers/errorController');
+const AppError = require('./utils/appError');
+
 const tourRoute = require('./routes/tourRoutes');
 const userRoute = require('./routes/userRoutes');
 
