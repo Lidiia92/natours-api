@@ -204,14 +204,14 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
         message: 'Your current password is wrong'
       }
     });
+  } else {
+    // 3) If so, update password
+    user.password = req.body.password;
+    user.passwordConfirm = req.body.passwordConfirm;
+    await user.save();
+    // User.findByIdAndUpdate will NOT work as intended!
+
+    // 4) Log user in, send JWT
+    createSendToken(user, 200, res);
   }
-
-  // 3) If so, update password
-  user.password = req.body.password;
-  user.passwordConfirm = req.body.passwordConfirm;
-  await user.save();
-  // User.findByIdAndUpdate will NOT work as intended!
-
-  // 4) Log user in, send JWT
-  createSendToken(user, 200, res);
 });
