@@ -46,6 +46,11 @@ const userSchema = new mongoose.Schema({
   },
   passwordResetExpiresAt: {
     type: Date
+  },
+  active: {
+    type: Boolean,
+    default: true,
+    select: false
   }
 });
 
@@ -68,8 +73,9 @@ userSchema.pre('save', function(next) {
   next();
 });
 
+//QUERY MIDDLEWARE
 userSchema.pre(/^find/, function(next) {
-  // this points to the current query
+  // this points to the current query, for example await User.find()
   this.find({ active: { $ne: false } });
   next();
 });
