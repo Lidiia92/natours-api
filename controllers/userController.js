@@ -14,8 +14,10 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-//ROUTE HANDLES
-exports.getAllUsers = factory.getAll(User);
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   // 1) Create a new error if user posts password data
@@ -48,6 +50,9 @@ exports.addNewUser = (req, res) => {
     message: 'This route is not yet implemented. Please use sign up instead.'
   });
 };
+
+//ROUTE HANDLES
+exports.getAllUsers = factory.getAll(User);
 
 exports.getUserById = factory.getOne(User);
 
