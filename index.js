@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -15,7 +16,13 @@ const reviewRoute = require('./routes/reviewRoutes');
 
 const app = express();
 
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
 // MIDDLEWARE ***
+
+//accesing html static files
+app.use(express.static(path.join(__dirname, 'public')));
 
 //Set security http headers
 app.use(helmet());
@@ -57,8 +64,6 @@ app.use(
   })
 );
 
-app.use(express.static(`${__dirname}/public`)); //accesing html static files
-
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   next();
@@ -71,6 +76,10 @@ app.use((req, res, next) => {
 // app.delete('/api/v1/tours/:id', deleteTour);
 
 // ROUTES
+app.get('/', (req, res) => {
+  res.status(200).render('base');
+});
+
 app.use('/api/v1/tours', tourRoute);
 app.use('/api/v1/users', userRoute);
 app.use('/api/v1/reviews', reviewRoute);
