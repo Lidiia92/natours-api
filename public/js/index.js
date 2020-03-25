@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import { login } from './login';
+import { login, logout } from './login';
 import { signup } from './signup';
 import { displayMap } from './mapbox';
 
@@ -8,6 +8,7 @@ import { displayMap } from './mapbox';
 const mapbox = document.getElementById('map');
 const loginForm = document.querySelector('#formLogin');
 const signupForm = document.querySelector('#formSignUp');
+const logOutBtn = document.querySelector('.nav__el--logout');
 
 //VALUES
 
@@ -36,3 +37,5 @@ if (signupForm) {
     signup(name, email, password, passwordConfirm);
   });
 }
+
+if (logOutBtn) logOutBtn.addEventListener('click', logout);
