@@ -9105,7 +9105,71 @@ var displayMap = function displayMap(locations) {
 };
 
 exports.displayMap = displayMap;
-},{}],"index.js":[function(require,module,exports) {
+},{}],"updateSettings.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.updateSettings = void 0;
+
+var _axios = _interopRequireDefault(require("axios"));
+
+var _alerts = require("./alerts");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+// type is either 'password' or 'data'
+var updateSettings = /*#__PURE__*/function () {
+  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data, type) {
+    var url, res;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _context.prev = 0;
+            url = type === 'password' ? 'http://localhost:8000/api/v1/users/updatePassword' : 'http://localhost:8000/api/v1/users/updateMe';
+            _context.next = 4;
+            return (0, _axios.default)({
+              method: 'PATCH',
+              url: url,
+              data: data
+            });
+
+          case 4:
+            res = _context.sent;
+
+            if (res.data.status === 'success') {
+              (0, _alerts.showAlert)('success', "".concat(type.toUpperCase(), " updated successfully!"));
+            }
+
+            _context.next = 11;
+            break;
+
+          case 8:
+            _context.prev = 8;
+            _context.t0 = _context["catch"](0);
+            (0, _alerts.showAlert)('error', _context.t0.response.data.message);
+
+          case 11:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, null, [[0, 8]]);
+  }));
+
+  return function updateSettings(_x, _x2) {
+    return _ref.apply(this, arguments);
+  };
+}();
+
+exports.updateSettings = updateSettings;
+},{"axios":"../../node_modules/axios/index.js","./alerts":"alerts.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _login = require("./login");
@@ -9114,12 +9178,15 @@ var _signup = require("./signup");
 
 var _mapbox = require("./mapbox");
 
+var _updateSettings = require("./updateSettings");
+
 /* eslint-disable */
 //DOM ELEMENTS
 var mapbox = document.getElementById('map');
 var loginForm = document.querySelector('#formLogin');
 var signupForm = document.querySelector('#formSignUp');
-var logOutBtn = document.querySelector('.nav__el--logout'); //VALUES
+var logOutBtn = document.querySelector('.nav__el--logout');
+var userDataForm = document.querySelector('.form-user-data'); //VALUES
 //DELEGATION
 
 if (mapbox) {
@@ -9147,8 +9214,17 @@ if (signupForm) {
   });
 }
 
+if (userDataForm) userDataForm.addEventListener('submit', function (e) {
+  e.preventDefault();
+  var name = document.getElementById('name').value;
+  var email = document.getElementById('email').value;
+  (0, _updateSettings.updateSettings)({
+    name: name,
+    email: email
+  }, 'data');
+});
 if (logOutBtn) logOutBtn.addEventListener('click', _login.logout);
-},{"./login":"login.js","./signup":"signup.js","./mapbox":"mapbox.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./login":"login.js","./signup":"signup.js","./mapbox":"mapbox.js","./updateSettings":"updateSettings.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
