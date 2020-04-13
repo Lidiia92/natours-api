@@ -14,6 +14,7 @@ const AppError = require('./utils/appError');
 const tourRoute = require('./routes/tourRoutes');
 const userRoute = require('./routes/userRoutes');
 const reviewRoute = require('./routes/reviewRoutes');
+const bookingRouter = require('./routes/bookingRoutes');
 const viewRoute = require('./routes/viewRoutes');
 
 const app = express();
@@ -95,6 +96,7 @@ app.use('/', viewRoute);
 app.use('/api/v1/tours', tourRoute);
 app.use('/api/v1/users', userRoute);
 app.use('/api/v1/reviews', reviewRoute);
+app.use('/api/v1/bookings', bookingRouter);
 
 //NONEXISTING ROUTES HANDLER
 app.all('*', (req, res, next) => {
