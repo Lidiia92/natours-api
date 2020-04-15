@@ -2,11 +2,11 @@
 
 export const displayMap = locations => {
   mapboxgl.accessToken =
-    'pk.eyJ1IjoibGlkaWlhOTIiLCJhIjoiY2s3eG9kYW54MGYybDNrcXA2bzBoanFwYiJ9.rxrV02oK72T0sc_FN6I2yg';
+    'pk.eyJ1IjoibGlkaWlhOTIiLCJhIjoiY2s3eG56Ym4zMGVyazNkbG5lcThreHliZiJ9.4_DmjctyAwgXlqtTd3dAeg';
 
   var map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/jonasschmedtmann/cjvi9q8jd04mi1cpgmg7ev3dy',
+    style: `mapbox://styles/lidiia92/ck7xohld6087r1ill9njj6fbt`,
     scrollZoom: false
     // center: [-118.113491, 34.111745],
     // zoom: 10,
