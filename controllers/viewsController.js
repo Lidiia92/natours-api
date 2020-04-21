@@ -1,5 +1,6 @@
 const Tour = require('../models/tourModel');
 const User = require('../models/userModel');
+const Booking = require('../models/bookingModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
@@ -25,8 +26,20 @@ exports.getTour = catchAsync(async (req, res, next) => {
     fields: 'reviews rating user'
   });
 
+  const user = await User.findOne({ id: res.user });
+  console.log(user);
+
   if (!tour) {
     return next(new AppError('There is no tour with that name.', 404));
+  }
+
+  const booking = await Booking.findOne({ tour: tour.id });
+
+  if (!booking) {
+    res.status(200).render('tour', {
+      title: `${tour.name} Tour`,
+      tour
+    });
   }
 
   // 2) Build template
@@ -34,7 +47,8 @@ exports.getTour = catchAsync(async (req, res, next) => {
   // 3) Render template
   res.status(200).render('tour', {
     title: `${tour.name} Tour`,
-    tour
+    tour,
+    booking
   });
 });
 
@@ -55,6 +69,20 @@ exports.getAccount = (req, res) => {
     title: 'Your account'
   });
 };
+
+exports.getMyTours = catchAsync(async (req, res, next) => {
+  // 1) Find all bookings
+  const bookings = await Booking.find({ user: req.user.id });
+
+  // 2) Find tours with the returned IDs
+  const tourIDs = bookings.map(el => el.tour);
+  const tours = await Tour.find({ _id: { $in: tourIDs } });
+
+  res.status(200).render('overview', {
+    title: 'My Tours',
+    tours
+  });
+});
 
 exports.updateUserData = catchAsync(async (req, res, next) => {
   const updatedUser = await User.findByIdAndUpdate(
