@@ -26,29 +26,28 @@ exports.getTour = catchAsync(async (req, res, next) => {
     fields: 'reviews rating user'
   });
 
-  const user = await User.findOne({ id: res.user });
-  console.log(user);
+  // const user = await User.findOne({ id: res.user });
+  // console.log(user);
 
   if (!tour) {
     return next(new AppError('There is no tour with that name.', 404));
   }
 
-  const booking = await Booking.findOne({ tour: tour.id });
+  // const booking = await Booking.findOne({ tour: tour.id });
 
-  if (!booking) {
-    res.status(200).render('tour', {
-      title: `${tour.name} Tour`,
-      tour
-    });
-  }
+  // if (!booking) {
+  //   res.status(200).render('tour', {
+  //     title: `${tour.name} Tour`,
+  //     tour
+  //   });
+  // }
 
   // 2) Build template
 
   // 3) Render template
   res.status(200).render('tour', {
     title: `${tour.name} Tour`,
-    tour,
-    booking
+    tour
   });
 });
 
