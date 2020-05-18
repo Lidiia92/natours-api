@@ -19,6 +19,7 @@ const bookingRouter = require('./routes/bookingRoutes');
 const viewRoute = require('./routes/viewRoutes');
 
 const app = express();
+app.enable('trust proxy');
 
 // app.use(function(req, res, next) {
 //   res.header('Access-Control-Allow-Origin', '*');
